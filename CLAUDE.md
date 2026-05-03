@@ -46,8 +46,9 @@ POST /api/cron/check
 3. **커밋**: 작업 완료마다 커밋한다 (아래 커밋 컨벤션 참고).
 4. **문서화**: 작업마다 아래 규칙에 따라 문서를 생성한다 (YAML frontmatter + Obsidian 백링크 형식).
    - 아키텍처 결정: `docs/ADR/ADR-YYYYMMDD-{한글태스크명}.md`
-   - 작업 기록: `docs/TASK/TASK-YYYYMMDD-{한글태스크명}.md`
-   - 설계 스펙: `docs/TASK/SPEC-YYYYMMDD-{한글태스크명}.md`
+   - 작업별 디렉터리: `docs/TASK/TASK-YYYYMMDD-{한글태스크명}/`
+     - 작업 기록: `TASK-YYYYMMDD-{한글태스크명}.md`
+     - 설계 스펙 (해당 시): `SPEC-YYYYMMDD-{한글태스크명}.md`
 
 ---
 
