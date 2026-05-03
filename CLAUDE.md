@@ -44,7 +44,10 @@ POST /api/cron/check
 1. **Phase 단위 검수**: Phase를 하나씩 완료한 뒤 사용자 검수를 기다린다. 사용자의 명시적 지시 없이 다음 Phase를 자의적으로 진행하지 않는다.
 2. **TDD**: 모든 구현은 테스트 먼저 작성 후 진행한다 (아래 TDD 섹션 참고).
 3. **커밋**: 작업 완료마다 커밋한다 (아래 커밋 컨벤션 참고).
-4. **문서화**: 작업마다 `docs/ADR/`, `docs/TASK/`에 YAML frontmatter + Obsidian 백링크 형식으로 문서를 생성한다.
+4. **문서화**: 작업마다 아래 규칙에 따라 문서를 생성한다 (YAML frontmatter + Obsidian 백링크 형식).
+   - 아키텍처 결정: `docs/ADR/ADR-YYYYMMDD-{한글태스크명}.md`
+   - 작업 기록: `docs/TASK/TASK-YYYYMMDD-{한글태스크명}.md`
+   - 설계 스펙: `docs/TASK/SPEC-YYYYMMDD-{한글태스크명}.md`
 
 ---
 

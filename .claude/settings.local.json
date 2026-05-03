@@ -6,7 +6,22 @@
       "Bash(claude plugins *)",
       "Read(//Users/juhyunlee/.claude/**)",
       "Bash(python3 -m json.tool)",
-      "Bash(npx create-next-app@latest *)"
+      "Bash(npx create-next-app@latest *)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(node -e \"const jest = require\\('jest'\\); console.log\\(Object.keys\\(require\\('@jest/core'\\).SearchSource\\)\\)\")",
+      "Bash(node -e \"const c = require\\('/Users/juhyunlee/Developer/fresh-air/node_modules/jest-config'\\); console.log\\(JSON.stringify\\(Object.keys\\(c.Defaults || {}\\)\\)\\)\")",
+      "Bash(node -e \"const c = require\\('/Users/juhyunlee/Developer/fresh-air/node_modules/jest-circus/build/index.js'\\); console.log\\(Object.keys\\(c\\)\\)\")",
+      "Bash(node -p \"Object.keys\\(require\\('/Users/juhyunlee/Developer/fresh-air/node_modules/jest-config/build/Defaults'\\)\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(git -C /Users/juhyunlee/Developer/fresh-air restore --staged .idea/vcs.xml)",
+      "Bash(git -C /Users/juhyunlee/Developer/fresh-air add .gitignore CLAUDE.md PRD.md WBS.md .env.local.example package.json package-lock.json)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(mkdir -p /Users/juhyunlee/Developer/fresh-air/docs/archive/TASK)",
+      "Bash(mv /Users/juhyunlee/Developer/fresh-air/docs/TASK/*.md /Users/juhyunlee/Developer/fresh-air/docs/archive/TASK/)",
+      "Bash(rm /Users/juhyunlee/.claude/projects/-Users-juhyunlee-Developer-fresh-air/memory/feedback_tdd.md /Users/juhyunlee/.claude/projects/-Users-juhyunlee-Developer-fresh-air/memory/feedback_commit_convention.md /Users/juhyunlee/.claude/projects/-Users-juhyunlee-Developer-fresh-air/memory/feedback_phase_review.md /Users/juhyunlee/.claude/projects/-Users-juhyunlee-Developer-fresh-air/memory/feedback_adr_task_docs.md)",
+      "Bash(git commit *)"
     ]
   }
 }
