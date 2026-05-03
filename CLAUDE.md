@@ -16,44 +16,6 @@
 - **공기질 데이터**: 에어코리아 API (한국환경공단, 공공데이터포털)
 - **배포**: Vercel (Hobby 플랜)
 
-## 프로젝트 구조
-
-```
-app/
-  page.tsx                  # 메인 UI
-  layout.tsx                # PWA 메타, manifest 링크, SW 등록
-  api/
-    air-quality/route.ts    # 에어코리아 API 프록시
-    subscribe/route.ts      # 푸시 구독 등록(POST)/해제(DELETE)
-    cron/check/route.ts     # 크론 진입점 (CRON_SECRET 보호)
-components/
-  AirQualityCard.tsx        # PM2.5 수치 + 등급 표시
-  NotificationToggle.tsx    # 구독/해제 토글
-  LocationDisplay.tsx       # GPS 지역명 표시
-lib/
-  airkorea.ts               # 에어코리아 API 클라이언트
-  redis.ts                  # Upstash Redis 클라이언트
-  webpush.ts                # web-push 초기화 및 sendNotification 래퍼
-  geo.ts                    # 좌표 → 가장 가까운 측정소 선택
-public/
-  sw.js                     # Service Worker (push 이벤트 처리)
-  manifest.json             # PWA manifest
-```
-
-## 환경 변수 (.env.local)
-
-```env
-AIRKOREA_API_KEY=           # 공공데이터포털에서 발급
-VAPID_PUBLIC_KEY=           # npx web-push generate-vapid-keys
-VAPID_PRIVATE_KEY=
-VAPID_SUBJECT=mailto:your@email.com
-UPSTASH_REDIS_REST_URL=     # Upstash 콘솔에서 복사
-UPSTASH_REDIS_REST_TOKEN=
-CRON_SECRET=                # 임의의 긴 문자열 (cron-job.org 인증용)
-```
-
-`.env.local.example` 파일을 복사해 사용하세요.
-
 ## PM2.5 등급 기준 (한국 환경부)
 
 | 등급 | 범위 | UI 색상 |
@@ -100,14 +62,6 @@ POST /api/cron/check
 | `test` | 테스트 코드 추가/수정 |
 | `style` | 코드 포맷 등 스타일 변경 |
 
-예시:
-```
-feat: 에어코리아 API 클라이언트 구현
-docs: TDD 개발 방법론 가이드 추가
-chore: Jest 테스트 인프라 설정
-test: 공기질 등급 계산 단위 테스트 추가
-```
-
 ---
 
 ## 개발 방법론: TDD (테스트 주도 개발)
@@ -119,24 +73,6 @@ test: 공기질 등급 계산 단위 테스트 추가
 2. **Green** — 테스트를 통과하는 최소한의 구현 작성
 3. **Refactor** — 중복 제거, 코드 정리 (테스트는 계속 통과해야 함)
 
-### 테스트 파일 위치 규칙
-```
-__tests__/
-  lib/
-    geo.test.ts
-    airkorea.test.ts
-    redis.test.ts
-    webpush.test.ts
-  api/
-    air-quality.test.ts
-    subscribe.test.ts
-    cron.test.ts
-  components/
-    AirQualityCard.test.tsx
-    NotificationToggle.test.tsx
-    LocationDisplay.test.tsx
-```
-
 ### 테스트 명령어
 ```bash
 npm test               # 전체 테스트 실행
@@ -146,40 +82,6 @@ npm run test:coverage  # 커버리지 리포트 포함
 
 ### Phase 완료 기준
 - 해당 Phase의 모든 테스트가 통과해야 완료로 간주한다.
-
-## 개발 명령어
-
-```bash
-npm run dev       # 개발 서버 (http://localhost:3000)
-npm run build     # 프로덕션 빌드
-npm run lint      # ESLint
-npm test          # 테스트 실행
-```
-
-## 초기 설정 가이드
-
-### 1. VAPID 키 생성
-```bash
-npx web-push generate-vapid-keys
-```
-출력된 Public Key, Private Key를 `.env.local`의 `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`에 입력.
-`VAPID_SUBJECT`에는 `mailto:your@email.com` 형식으로 입력.
-
-### 2. 에어코리아 API 키 발급
-1. https://www.data.go.kr 접속
-2. "한국환경공단_에어코리아_대기오염정보" 검색
-3. 활용신청 → 일반 인증키 발급 (즉시 발급)
-4. 발급된 인코딩 키를 `AIRKOREA_API_KEY`에 입력
-
-### 3. Upstash Redis 생성
-1. https://console.upstash.com 접속 → Redis → Create Database
-2. Region: `ap-northeast-1` (서울과 가장 가까운 도쿄)
-3. REST URL, REST Token을 각각 환경 변수에 입력
-
-### 4. CRON_SECRET 생성
-```bash
-openssl rand -hex 32
-```
 
 ## 주의사항
 
