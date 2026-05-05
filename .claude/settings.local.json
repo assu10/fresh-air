@@ -21,7 +21,12 @@
       "Bash(mkdir -p /Users/juhyunlee/Developer/fresh-air/docs/archive/TASK)",
       "Bash(mv /Users/juhyunlee/Developer/fresh-air/docs/TASK/*.md /Users/juhyunlee/Developer/fresh-air/docs/archive/TASK/)",
       "Bash(rm /Users/juhyunlee/.claude/projects/-Users-juhyunlee-Developer-fresh-air/memory/feedback_tdd.md /Users/juhyunlee/.claude/projects/-Users-juhyunlee-Developer-fresh-air/memory/feedback_commit_convention.md /Users/juhyunlee/.claude/projects/-Users-juhyunlee-Developer-fresh-air/memory/feedback_phase_review.md /Users/juhyunlee/.claude/projects/-Users-juhyunlee-Developer-fresh-air/memory/feedback_adr_task_docs.md)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(claude --version)",
+      "Bash(npx @anthropic-ai/claude-code --version)",
+      "Bash(npm show *)",
+      "Bash(npm test *)",
+      "Bash(npx jest *)"
     ]
   }
 }

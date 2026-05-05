@@ -63,6 +63,18 @@ describe('POST /api/cron/check', () => {
     jest.clearAllMocks();
   });
 
+  describe('구독 없음', () => {
+    it('구독이 없으면 빈 통계를 반환한다', async () => {
+      mockHgetall.mockResolvedValue(null);
+
+      const res = await POST(makeRequest(SECRET));
+      const body = await res.json();
+
+      expect(res.status).toBe(200);
+      expect(body).toEqual({ processed: 0, notified: 0, deleted: 0, skipped: 0 });
+    });
+  });
+
   describe('인증', () => {
     it('Authorization 헤더가 없으면 401을 반환한다', async () => {
       const res = await POST(makeRequest());
