@@ -49,6 +49,7 @@ POST /api/cron/check
    - 작업별 디렉터리: `docs/work/TASK-YYYYMMDD-{한글태스크명}/`
      - 작업 기록: `TASK-YYYYMMDD-{한글태스크명}.md`
      - 설계 스펙 (해당 시): `SPEC-YYYYMMDD-{한글태스크명}.md`
+     - 구현 계획 (해당 시): `PLAN-YYYYMMDD-{한글태스크명}.md`
 
 ---
 
