@@ -55,7 +55,7 @@ export default function AirQualityCard({
         className="w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-xl"
         style={{ background: color }}
       >
-        {pm25}
+        {pm25 ?? '—'}
       </div>
       <div>
         <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{grade}</p>
