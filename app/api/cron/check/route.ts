@@ -53,15 +53,23 @@ export async function POST(request: NextRequest) {
     const shouldNotify = prev !== null && prev > 35 && pm25Value <= 35;
 
     if (shouldNotify) {
-      for (const { sub } of subscribers) {
+      for (const { key, sub } of subscribers) {
         try {
           await sendPushNotification(
             { endpoint: sub.endpoint, keys: sub.keys, expirationTime: sub.expirationTime },
             { title: '환기하기 좋은 날씨예요!', body: `${sub.regionName} PM2.5 ${pm25Value} μg/m³ — 지금 환기하세요.` },
           );
           stats.notified++;
-        } catch {
-          // push 실패 로그 — 410 처리는 Task 5에서 추가
+        } catch (err: unknown) {
+          if (
+            err !== null &&
+            typeof err === 'object' &&
+            'statusCode' in err &&
+            (err as { statusCode: number }).statusCode === 410
+          ) {
+            await redis.hdel(KEYS.subscriptions, key);
+            stats.deleted++;
+          }
         }
       }
     }

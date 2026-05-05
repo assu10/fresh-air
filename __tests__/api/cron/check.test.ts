@@ -122,6 +122,55 @@ describe('POST /api/cron/check', () => {
     });
   });
 
+  describe('에러 처리', () => {
+    it('push 발송 시 410 Gone이면 구독을 삭제하고 deleted를 증가시킨다', async () => {
+      mockHgetall.mockResolvedValue(subMap());
+      mockGetAirQuality.mockResolvedValue({ pm25Value: 30, pm25Grade: 2, dataTime: '', stationName: '강남구' });
+      mockGet.mockResolvedValue('50');
+      const err410 = Object.assign(new Error('Gone'), { statusCode: 410 });
+      mockSendPush.mockRejectedValue(err410);
+
+      const res = await POST(makeRequest(SECRET));
+      const body = await res.json();
+
+      expect(mockHdel).toHaveBeenCalledWith('subscriptions', 'abc123');
+      expect(body.deleted).toBe(1);
+      expect(body.notified).toBe(0);
+    });
+
+    it('에어코리아 API 실패 시 해당 측정소를 skipped 처리하고 나머지는 계속한다', async () => {
+      const mockSub2: StoredSubscription = { ...mockSub, stationName: '마포구', regionName: '서울 마포구' };
+      mockHgetall.mockResolvedValue({
+        abc123: JSON.stringify(mockSub),
+        def456: JSON.stringify(mockSub2),
+      });
+      mockGetAirQuality
+        .mockRejectedValueOnce(new Error('API 오류'))
+        .mockResolvedValueOnce({ pm25Value: 30, pm25Grade: 2, dataTime: '', stationName: '마포구' });
+      mockGet.mockResolvedValue('50');
+      mockSendPush.mockResolvedValue(undefined);
+
+      const res = await POST(makeRequest(SECRET));
+      const body = await res.json();
+
+      expect(body.skipped).toBe(1);
+      expect(body.processed).toBe(1);
+      expect(body.notified).toBe(1);
+    });
+
+    it('pm25Value가 null이면 last_pm25를 갱신하지 않는다', async () => {
+      mockHgetall.mockResolvedValue(subMap());
+      mockGetAirQuality.mockResolvedValue({ pm25Value: null, pm25Grade: null, dataTime: '', stationName: '강남구' });
+      mockGet.mockResolvedValue('50');
+
+      const res = await POST(makeRequest(SECRET));
+      const body = await res.json();
+
+      expect(mockSet).not.toHaveBeenCalled();
+      expect(body.processed).toBe(1);
+    });
+  });
+
   describe('구독 없음', () => {
     it('구독이 없으면 빈 통계를 반환한다', async () => {
       mockHgetall.mockResolvedValue(null);
