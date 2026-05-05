@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { redis, KEYS } from '@/lib/redis';
 import { getRealtimeAirQuality } from '@/lib/airkorea';
+import { sendPushNotification } from '@/lib/webpush';
 import type { StoredSubscription } from '@/lib/webpush';
 
 export async function POST(request: NextRequest) {
@@ -33,7 +34,7 @@ export async function POST(request: NextRequest) {
   );
 
   for (let i = 0; i < stationEntries.length; i++) {
-    const [stationName] = stationEntries[i];
+    const [stationName, subscribers] = stationEntries[i];
     const result = results[i];
 
     if (result.status === 'rejected') {
@@ -52,7 +53,17 @@ export async function POST(request: NextRequest) {
     const shouldNotify = prev !== null && prev > 35 && pm25Value <= 35;
 
     if (shouldNotify) {
-      // push 발송 — Task 4에서 구현
+      for (const { sub } of subscribers) {
+        try {
+          await sendPushNotification(
+            { endpoint: sub.endpoint, keys: sub.keys, expirationTime: sub.expirationTime },
+            { title: '환기하기 좋은 날씨예요!', body: `${sub.regionName} PM2.5 ${pm25Value} μg/m³ — 지금 환기하세요.` },
+          );
+          stats.notified++;
+        } catch {
+          // push 실패 로그 — 410 처리는 Task 5에서 추가
+        }
+      }
     }
 
     await redis.set(KEYS.lastPm25(stationName), pm25Value);

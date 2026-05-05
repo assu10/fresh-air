@@ -103,6 +103,25 @@ describe('POST /api/cron/check', () => {
     });
   });
 
+  describe('임계값 전환 (push 발송)', () => {
+    it('이전값 > 35, 현재값 ≤ 35 이면 push를 발송하고 notified를 증가시킨다', async () => {
+      mockHgetall.mockResolvedValue(subMap());
+      mockGetAirQuality.mockResolvedValue({ pm25Value: 30, pm25Grade: 2, dataTime: '', stationName: '강남구' });
+      mockGet.mockResolvedValue('50');
+      mockSendPush.mockResolvedValue(undefined);
+
+      const res = await POST(makeRequest(SECRET));
+      const body = await res.json();
+
+      expect(mockSendPush).toHaveBeenCalledWith(
+        { endpoint: mockSub.endpoint, keys: mockSub.keys, expirationTime: mockSub.expirationTime },
+        { title: '환기하기 좋은 날씨예요!', body: '서울 강남구 PM2.5 30 μg/m³ — 지금 환기하세요.' },
+      );
+      expect(body.notified).toBe(1);
+      expect(body.processed).toBe(1);
+    });
+  });
+
   describe('구독 없음', () => {
     it('구독이 없으면 빈 통계를 반환한다', async () => {
       mockHgetall.mockResolvedValue(null);
