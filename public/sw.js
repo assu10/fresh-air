@@ -1,5 +1,10 @@
 self.addEventListener('push', (event) => {
-  const data = event.data ? event.data.json() : {};
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    data = { body: event.data ? event.data.text() : '' };
+  }
   const title = data.title ?? 'Fresh Air';
   const options = {
     body: data.body ?? '',
@@ -12,12 +17,12 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
-    clients
+    self.clients
       .matchAll({ type: 'window', includeUncontrolled: true })
       .then((clientList) => {
         const existing = clientList.find((c) => 'focus' in c);
         if (existing) return existing.focus();
-        if (clients.openWindow) return clients.openWindow('/');
+        if (self.clients.openWindow) return self.clients.openWindow('/');
       }),
   );
 });
