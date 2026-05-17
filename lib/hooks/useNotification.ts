@@ -42,7 +42,7 @@ export function useNotification(
   }, []);
 
   const toggle = async () => {
-    if (!registration || !stationName || !addr) return;
+    if (!registration || !stationName) return;
     setLoading(true);
     try {
       const existing = await registration.pushManager.getSubscription();

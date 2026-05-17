@@ -6,6 +6,7 @@ import AirQualityCard from '@/components/AirQualityCard';
 import NotificationToggle from '@/components/NotificationToggle';
 import { useAirQuality } from '@/lib/hooks/useAirQuality';
 import { useNotification } from '@/lib/hooks/useNotification';
+import { useReverseGeocode } from '@/lib/hooks/useReverseGeocode';
 
 export default function Home() {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
@@ -13,6 +14,7 @@ export default function Home() {
   const [geoLoading, setGeoLoading] = useState(false);
 
   const { data, loading, error, retry } = useAirQuality(coords);
+  const { locationName, loading: geoLoading } = useReverseGeocode(coords);
   const { isSubscribed, isSupported, loading: notifLoading, toggle } = useNotification(
     data?.stationName ?? null,
     data?.addr ?? null,
@@ -71,9 +73,8 @@ export default function Home() {
     <main className="flex min-h-dvh flex-col items-center px-6 py-12 bg-white dark:bg-slate-900">
       <div className="w-full max-w-sm flex flex-col gap-4">
         <LocationDisplay
-          stationName={data?.stationName ?? null}
-          addr={data?.addr ?? null}
-          loading={loading}
+          locationName={locationName}
+          loading={geoLoading}
         />
         <AirQualityCard
           pm25={data?.pm25 ?? null}

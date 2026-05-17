@@ -1,10 +1,9 @@
 interface LocationDisplayProps {
-  stationName: string | null;
-  addr: string | null;
+  locationName: string | null;
   loading: boolean;
 }
 
-export default function LocationDisplay({ stationName, addr, loading }: LocationDisplayProps) {
+export default function LocationDisplay({ locationName, loading }: LocationDisplayProps) {
   if (loading) {
     return (
       <div
@@ -18,13 +17,12 @@ export default function LocationDisplay({ stationName, addr, loading }: Location
     );
   }
 
-  const displayText = addr ?? stationName;
-  if (!displayText) return null;
+  if (!locationName) return null;
 
   return (
     <div className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
       <span aria-hidden="true">📍</span>
-      <span>{displayText}</span>
+      <span>{locationName}</span>
     </div>
   );
 }
