@@ -26,7 +26,12 @@
       "Bash(npx @anthropic-ai/claude-code --version)",
       "Bash(npm show *)",
       "Bash(npm test *)",
-      "Bash(npx jest *)"
+      "Bash(npx jest *)",
+      "Bash(npm run *)",
+      "Bash(find /Users/juhyunlee/Developer/fresh-air/docs -type f | sort 2>/dev/null || echo \"docs 폴더 없음\")",
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "Bash(ls /Users/juhyunlee/Developer/fresh-air/.env* 2>/dev/null || echo \"없음\")"
     ]
   }
 }
