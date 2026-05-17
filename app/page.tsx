@@ -12,7 +12,7 @@ export default function Home() {
   const [geoError, setGeoError] = useState<string | null>(null);
   const [geoLoading, setGeoLoading] = useState(false);
 
-  const { data, loading, error } = useAirQuality(coords);
+  const { data, loading, error, retry } = useAirQuality(coords);
   const { isSubscribed, isSupported, loading: notifLoading, toggle } = useNotification(
     data?.stationName ?? null,
     data?.addr ?? null,
@@ -83,6 +83,7 @@ export default function Home() {
           dataTime={data?.dataTime ?? ''}
           loading={loading}
           error={error}
+          onRetry={retry}
         />
         <NotificationToggle
           isSubscribed={isSubscribed}

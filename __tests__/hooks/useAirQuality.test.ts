@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useAirQuality } from '@/lib/hooks/useAirQuality';
 
 const mockFetch = jest.fn();
@@ -44,15 +44,33 @@ describe('useAirQuality', () => {
     expect(mockFetch).toHaveBeenCalledWith('/api/air-quality?lat=37.5&lng=127');
   });
 
-  it('API 응답이 ok=false 이면 error를 설정한다', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
+  it('API 응답이 ok=false 이면 응답 body의 error 메시지를 설정한다', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => ({ error: 'SERVICE_KEY_IS_NOT_REGISTERED_ERROR' }),
+    });
+
+    const { result } = renderHook(() => useAirQuality({ lat: 37.5, lng: 127.0 }));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.error).toBe('SERVICE_KEY_IS_NOT_REGISTERED_ERROR');
+    expect(result.current.data).toBe(null);
+  });
+
+  it('API ok=false이고 body에 error가 없으면 기본 메시지를 사용한다', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      json: async () => ({}),
+    });
 
     const { result } = renderHook(() => useAirQuality({ lat: 37.5, lng: 127.0 }));
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     expect(result.current.error).toBe('데이터를 불러올 수 없어요');
-    expect(result.current.data).toBe(null);
   });
 
   it('네트워크 오류 시 error 메시지를 설정한다', async () => {
@@ -64,5 +82,23 @@ describe('useAirQuality', () => {
 
     expect(result.current.error).toBe('Network error');
     expect(result.current.data).toBe(null);
+  });
+
+  it('retry() 호출 시 API를 다시 fetch한다', async () => {
+    mockFetch
+      .mockResolvedValueOnce({ ok: false, status: 500, json: async () => ({}) })
+      .mockResolvedValueOnce({ ok: true, json: async () => mockData });
+
+    const { result } = renderHook(() => useAirQuality({ lat: 37.5, lng: 127.0 }));
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.error).toBe('데이터를 불러올 수 없어요');
+
+    act(() => result.current.retry());
+
+    await waitFor(() => expect(result.current.loading).toBe(false));
+    expect(result.current.data).toEqual(mockData);
+    expect(result.current.error).toBe(null);
+    expect(mockFetch).toHaveBeenCalledTimes(2);
   });
 });

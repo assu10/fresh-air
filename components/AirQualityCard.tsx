@@ -6,6 +6,7 @@ interface AirQualityCardProps {
   dataTime: string;
   loading: boolean;
   error: string | null;
+  onRetry?: () => void;
 }
 
 export default function AirQualityCard({
@@ -16,6 +17,7 @@ export default function AirQualityCard({
   dataTime,
   loading,
   error,
+  onRetry,
 }: AirQualityCardProps) {
   if (loading) {
     return (
@@ -42,6 +44,15 @@ export default function AirQualityCard({
           데이터를 불러올 수 없어요
         </p>
         <p className="text-xs text-orange-500 dark:text-orange-400 mt-1">{error}</p>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            aria-label="다시 불러오기"
+            className="mt-3 text-xs font-medium text-orange-600 dark:text-orange-400 underline underline-offset-2"
+          >
+            다시 불러오기
+          </button>
+        )}
       </div>
     );
   }

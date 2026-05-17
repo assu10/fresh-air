@@ -35,6 +35,10 @@ export async function getNearbyStations(tmX: number, tmY: number): Promise<Nearb
   if (!res.ok) throw new Error(`측정소 조회 실패: ${res.status}`);
 
   const json = await res.json();
+  const header = json?.response?.header;
+  if (header?.resultCode !== '00') {
+    throw new Error(header?.resultMsg ?? '에어코리아 API 오류');
+  }
   const items: Array<{ stationName: string; addr: string; tm: string }> =
     json?.response?.body?.items ?? [];
 
@@ -59,6 +63,10 @@ export async function getRealtimeAirQuality(stationName: string): Promise<AirQua
   if (!res.ok) throw new Error(`대기질 조회 실패: ${res.status}`);
 
   const json = await res.json();
+  const header = json?.response?.header;
+  if (header?.resultCode !== '00') {
+    throw new Error(header?.resultMsg ?? '에어코리아 API 오류');
+  }
   const item = json?.response?.body?.items?.[0];
 
   if (!item) throw new Error(`측정소 데이터 없음: ${stationName}`);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface AirQualityData {
   pm25: number | null;
@@ -16,10 +16,14 @@ export function useAirQuality(coords: { lat: number; lng: number } | null): {
   data: AirQualityData | null;
   loading: boolean;
   error: string | null;
+  retry: () => void;
 } {
   const [data, setData] = useState<AirQualityData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const retry = useCallback(() => setRetryCount((c) => c + 1), []);
 
   const lat = coords?.lat;
   const lng = coords?.lng;
@@ -31,8 +35,11 @@ export function useAirQuality(coords: { lat: number; lng: number } | null): {
     setError(null);
 
     fetch(`/api/air-quality?lat=${lat}&lng=${lng}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('데이터를 불러올 수 없어요');
+      .then(async (res) => {
+        if (!res.ok) {
+          const errJson = await res.json().catch(() => ({}));
+          throw new Error((errJson as { error?: string }).error ?? '데이터를 불러올 수 없어요');
+        }
         return res.json();
       })
       .then((json: AirQualityData) => {
@@ -43,7 +50,7 @@ export function useAirQuality(coords: { lat: number; lng: number } | null): {
         setError(err instanceof Error ? err.message : '데이터를 불러올 수 없어요');
         setLoading(false);
       });
-  }, [lat, lng]);
+  }, [lat, lng, retryCount]);
 
-  return { data, loading, error };
+  return { data, loading, error, retry };
 }
