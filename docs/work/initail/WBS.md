@@ -51,28 +51,41 @@
 
 ---
 
-## Phase 4: 크론 엔드포인트 (TDD 적용)
+## Phase 4: 크론 엔드포인트 (TDD 적용) ✅
 
 | # | 작업 | 산출물 | 상태 |
 |---|------|--------|------|
-| 4.1 | 크론 로직 테스트 작성 (Red) | `__tests__/api/cron.test.ts` | ⬜ |
-| 4.2 | 크론 핵심 알림 로직 구현 (Green) | `app/api/cron/check/route.ts` | ⬜ |
-| 4.3 | 리팩토링 + 테스트 통과 확인 | — | ⬜ |
-| 4.4 | cron-job.org 설정 가이드 문서화 | CLAUDE.md 업데이트 | ⬜ |
+| 4.1 | 크론 로직 테스트 작성 (Red) | `__tests__/api/cron.test.ts` | ✅ |
+| 4.2 | 크론 핵심 알림 로직 구현 (Green) | `app/api/cron/check/route.ts` | ✅ |
+| 4.3 | 리팩토링 + 테스트 통과 확인 | — | ✅ |
+| 4.4 | cron-job.org 설정 가이드 문서화 | CLAUDE.md 업데이트 | ✅ |
 
 ---
 
-## Phase 5: PWA 프론트엔드 (TDD 적용)
+## Phase 5: PWA 프론트엔드 (TDD 적용) ✅
 
 | # | 작업 | 산출물 | 상태 |
 |---|------|--------|------|
-| 5.1 | PWA manifest 작성 | `public/manifest.json` | ⬜ |
-| 5.2 | Service Worker 작성 | `public/sw.js` | ⬜ |
-| 5.3 | AirQualityCard 테스트 → 구현 | `components/AirQualityCard.tsx` | ⬜ |
-| 5.4 | NotificationToggle 테스트 → 구현 | `components/NotificationToggle.tsx` | ⬜ |
-| 5.5 | LocationDisplay 테스트 → 구현 | `components/LocationDisplay.tsx` | ⬜ |
-| 5.6 | 메인 페이지 조합 | `app/page.tsx` | ⬜ |
-| 5.7 | 레이아웃 (manifest 링크, SW 등록) | `app/layout.tsx` | ⬜ |
+| 5.1 | PWA manifest 작성 | `app/manifest.ts` | ✅ |
+| 5.2 | Service Worker 작성 | `public/sw.js` | ✅ |
+| 5.3 | AirQualityCard 테스트 → 구현 | `components/AirQualityCard.tsx` | ✅ |
+| 5.4 | NotificationToggle 테스트 → 구현 | `components/NotificationToggle.tsx` | ✅ |
+| 5.5 | LocationDisplay 테스트 → 구현 | `components/LocationDisplay.tsx` | ✅ |
+| 5.6 | 메인 페이지 조합 | `app/page.tsx` | ✅ |
+| 5.7 | 레이아웃 (manifest 링크, SW 등록) | `app/layout.tsx` | ✅ |
+
+---
+
+## Phase 7: PWA 강화 (TDD 적용) ✅
+
+| # | 작업 | 산출물 | 상태 |
+|---|------|--------|------|
+| 7.1 | 아이콘 에셋 생성 및 manifest 업데이트 | `public/icons/`, `app/manifest.ts` | ✅ |
+| 7.2 | useInstallPrompt 훅 구현 | `lib/hooks/useInstallPrompt.ts` | ✅ |
+| 7.3 | InstallPrompt 컴포넌트 구현 | `components/InstallPrompt.tsx` | ✅ |
+| 7.4 | useNotification iOS 지원 강화 | `lib/hooks/useNotification.ts` | ✅ |
+| 7.5 | Service Worker 캐싱 전략 개선 | `public/sw.js` | ✅ |
+| 7.6 | page.tsx에 InstallPrompt 통합 | `app/page.tsx` | ✅ |
 
 ---
 
