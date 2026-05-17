@@ -14,7 +14,7 @@ export default function Home() {
   const [geoLoading, setGeoLoading] = useState(false);
 
   const { data, loading, error, retry } = useAirQuality(coords);
-  const { locationName, loading: geoLoading } = useReverseGeocode(coords);
+  const { locationName, loading: geocodeLoading } = useReverseGeocode(coords);
   const { isSubscribed, isSupported, loading: notifLoading, toggle } = useNotification(
     data?.stationName ?? null,
     data?.addr ?? null,
@@ -74,7 +74,7 @@ export default function Home() {
       <div className="w-full max-w-sm flex flex-col gap-4">
         <LocationDisplay
           locationName={locationName}
-          loading={geoLoading}
+          loading={geocodeLoading}
         />
         <AirQualityCard
           pm25={data?.pm25 ?? null}
