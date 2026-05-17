@@ -32,8 +32,18 @@
       "Bash(gh auth *)",
       "Bash(gh repo *)",
       "Bash(ls /Users/juhyunlee/Developer/fresh-air/.env* 2>/dev/null || echo \"없음\")",
+      "Bash(git checkout *)",
+      "Bash(git merge *)",
+      "Bash(git -C /Users/juhyunlee/Developer/fresh-air stash)",
+      "Bash(git -C /Users/juhyunlee/Developer/fresh-air merge claude/hopeful-visvesvaraya-78105f --no-ff -m \"feat: Phase 5 PWA 프론트엔드 구현 완료\")",
+      "Bash(git -C /Users/juhyunlee/Developer/fresh-air stash pop)",
+      "Bash(git -C /Users/juhyunlee/Developer/fresh-air add .claude/settings.local.json)",
+      "Bash(git -C /Users/juhyunlee/Developer/fresh-air commit -m \"chore: settings.local.json 충돌 해소\")",
+      "Bash(git -C /Users/juhyunlee/Developer/fresh-air stash drop)",
+      "Bash(gh pr *)",
       "Bash(/Users/juhyunlee/.claude/plugins/cache/superpowers-dev/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh *)",
-      "Bash(node *)"
+      "Bash(node *)",
+      "Bash(git stash *)"
     ]
   }
 }
