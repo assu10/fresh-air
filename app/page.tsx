@@ -15,7 +15,7 @@ export default function Home() {
 
   const { data, loading, error, retry } = useAirQuality(coords);
   const { locationName, loading: geocodeLoading } = useReverseGeocode(coords);
-  const { isSubscribed, isSupported, loading: notifLoading, toggle } = useNotification(
+  const { isSubscribed, isSupported, requiresInstall, loading: notifLoading, toggle } = useNotification(
     data?.stationName ?? null,
     data?.addr ?? null,
   );
@@ -89,6 +89,7 @@ export default function Home() {
         <NotificationToggle
           isSubscribed={isSubscribed}
           isSupported={isSupported}
+          requiresInstall={requiresInstall}
           loading={notifLoading}
           onToggle={toggle}
         />

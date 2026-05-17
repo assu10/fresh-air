@@ -1,6 +1,7 @@
 interface NotificationToggleProps {
   isSubscribed: boolean;
   isSupported: boolean;
+  requiresInstall: boolean;
   loading: boolean;
   onToggle: () => void;
 }
@@ -8,10 +9,18 @@ interface NotificationToggleProps {
 export default function NotificationToggle({
   isSubscribed,
   isSupported,
+  requiresInstall,
   loading,
   onToggle,
 }: NotificationToggleProps) {
-  const disabled = !isSupported || loading;
+  const disabled = !isSupported || loading || requiresInstall;
+
+  const subText = () => {
+    if (requiresInstall) return '홈 화면에 추가 후 알림을 켤 수 있어요';
+    if (!isSupported) return 'HTTPS 환경에서만 지원됩니다';
+    if (isSubscribed) return '알림이 켜져 있어요';
+    return 'PM2.5 ≤ 35 되면 알림';
+  };
 
   return (
     <div className="rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 flex items-center justify-between">
@@ -19,15 +28,7 @@ export default function NotificationToggle({
         <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
           환기 알림 받기
         </p>
-        {!isSupported ? (
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-            HTTPS 환경에서만 지원됩니다
-          </p>
-        ) : (
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-            {isSubscribed ? '알림이 켜져 있어요' : 'PM2.5 ≤ 35 되면 알림'}
-          </p>
-        )}
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{subText()}</p>
       </div>
       <button
         onClick={onToggle}

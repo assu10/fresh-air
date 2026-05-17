@@ -6,6 +6,7 @@ describe('NotificationToggle', () => {
   const defaultProps = {
     isSubscribed: false,
     isSupported: true,
+    requiresInstall: false,
     loading: false,
     onToggle: jest.fn(),
   };
