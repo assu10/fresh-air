@@ -31,7 +31,9 @@
       "Bash(find /Users/juhyunlee/Developer/fresh-air/docs -type f | sort 2>/dev/null || echo \"docs 폴더 없음\")",
       "Bash(gh auth *)",
       "Bash(gh repo *)",
-      "Bash(ls /Users/juhyunlee/Developer/fresh-air/.env* 2>/dev/null || echo \"없음\")"
+      "Bash(ls /Users/juhyunlee/Developer/fresh-air/.env* 2>/dev/null || echo \"없음\")",
+      "Bash(/Users/juhyunlee/.claude/plugins/cache/superpowers-dev/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh *)",
+      "Bash(node *)"
     ]
   }
 }
