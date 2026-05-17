@@ -1,65 +1,96 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import LocationDisplay from '@/components/LocationDisplay';
+import AirQualityCard from '@/components/AirQualityCard';
+import NotificationToggle from '@/components/NotificationToggle';
+import { useAirQuality } from '@/lib/hooks/useAirQuality';
+import { useNotification } from '@/lib/hooks/useNotification';
 
 export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [geoError, setGeoError] = useState<string | null>(null);
+  const [geoLoading, setGeoLoading] = useState(false);
+
+  const { data, loading, error } = useAirQuality(coords);
+  const { isSubscribed, isSupported, loading: notifLoading, toggle } = useNotification(
+    data?.stationName ?? null,
+    data?.addr ?? null,
+  );
+
+  const handleGetLocation = () => {
+    if (!navigator.geolocation) {
+      setGeoError('위치 기능을 지원하지 않는 브라우저입니다');
+      return;
+    }
+    setGeoLoading(true);
+    setGeoError(null);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setGeoLoading(false);
+      },
+      () => {
+        setGeoError('위치 권한이 거부됐습니다. 브라우저 설정에서 허용해주세요');
+        setGeoLoading(false);
+      },
+    );
+  };
+
+  if (!coords) {
+    return (
+      <main className="flex min-h-dvh flex-col items-center justify-center px-6 py-12 bg-white dark:bg-slate-900">
+        <div className="w-full max-w-sm text-center flex flex-col items-center gap-6">
+          <span className="text-6xl">🌿</span>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Fresh Air</h1>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+              내 위치의 미세먼지를 확인하고
+              <br />
+              환기 알림을 받아보세요
+            </p>
+          </div>
+          {geoError && (
+            <p className="text-xs text-red-500 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg px-4 py-2">
+              {geoError}
+            </p>
+          )}
+          <button
+            onClick={handleGetLocation}
+            disabled={geoLoading}
+            className="w-full bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white font-semibold rounded-xl px-6 py-3 transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            {geoLoading ? '위치 확인 중...' : '📍 내 위치 확인하기'}
+          </button>
         </div>
       </main>
-    </div>
+    );
+  }
+
+  return (
+    <main className="flex min-h-dvh flex-col items-center px-6 py-12 bg-white dark:bg-slate-900">
+      <div className="w-full max-w-sm flex flex-col gap-4">
+        <LocationDisplay
+          stationName={data?.stationName ?? null}
+          addr={data?.addr ?? null}
+          loading={loading}
+        />
+        <AirQualityCard
+          pm25={data?.pm25 ?? null}
+          grade={data?.grade ?? ''}
+          color={data?.color ?? '#9CA3AF'}
+          canVentilate={data?.canVentilate ?? false}
+          dataTime={data?.dataTime ?? ''}
+          loading={loading}
+          error={error}
+        />
+        <NotificationToggle
+          isSubscribed={isSubscribed}
+          isSupported={isSupported}
+          loading={notifLoading}
+          onToggle={toggle}
+        />
+      </div>
+    </main>
   );
 }
