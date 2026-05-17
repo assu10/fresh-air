@@ -2,7 +2,6 @@
  * @jest-environment node
  */
 import { NextRequest } from 'next/server';
-import { GET } from '@/app/api/air-quality/route';
 
 jest.mock('@/lib/airkorea', () => ({
   getNearbyStations: jest.fn(),
@@ -22,12 +21,13 @@ jest.mock('@/lib/geo', () => ({
   })),
 }));
 
+import { GET } from '@/app/api/air-quality/route';
 import { getNearbyStations, getRealtimeAirQuality } from '@/lib/airkorea';
 import { getOpenWeatherAirQuality } from '@/lib/openweather';
 
-const mockGetNearbyStations = getNearbyStations as jest.Mock;
-const mockGetRealtimeAirQuality = getRealtimeAirQuality as jest.Mock;
-const mockGetOpenWeather = getOpenWeatherAirQuality as jest.Mock;
+const mockGetNearbyStations = jest.mocked(getNearbyStations);
+const mockGetRealtimeAirQuality = jest.mocked(getRealtimeAirQuality);
+const mockGetOpenWeather = jest.mocked(getOpenWeatherAirQuality);
 
 function makeRequest(lat = 37.5, lng = 127.0) {
   return new NextRequest(`http://localhost/api/air-quality?lat=${lat}&lng=${lng}`);

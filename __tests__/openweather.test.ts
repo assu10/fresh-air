@@ -3,48 +3,34 @@ import { getOpenWeatherAirQuality } from '@/lib/openweather';
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
-function makeResponse(pm2_5: number, dt = 1747440000) {
+function makeResponse(pm2_5: number, time = '2026-05-17T13:00') {
   return {
     ok: true,
     json: async () => ({
-      list: [{ components: { pm2_5 }, dt }],
+      current: { time, interval: 3600, pm2_5 },
     }),
   };
 }
 
-describe('getOpenWeatherAirQuality', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    process.env.OPENWEATHER_API_KEY = 'test-key';
-  });
-
-  afterEach(() => {
-    delete process.env.OPENWEATHER_API_KEY;
-  });
+describe('getOpenWeatherAirQuality (Open-Meteo)', () => {
+  beforeEach(() => jest.clearAllMocks());
 
   it('정상 응답이면 pm25와 dataTime을 반환한다', async () => {
-    mockFetch.mockResolvedValueOnce(makeResponse(18.5, 1747440000));
+    mockFetch.mockResolvedValueOnce(makeResponse(16.6, '2026-05-17T13:00'));
     const result = await getOpenWeatherAirQuality(37.5, 127.0);
-    expect(result.pm25).toBe(18.5);
-    expect(typeof result.dataTime).toBe('string');
-    expect(result.dataTime.length).toBeGreaterThan(0);
-  });
-
-  it('API key가 없으면 fetch 없이 에러를 던진다', async () => {
-    delete process.env.OPENWEATHER_API_KEY;
-    await expect(getOpenWeatherAirQuality(37.5, 127.0)).rejects.toThrow('OPENWEATHER_API_KEY');
-    expect(mockFetch).not.toHaveBeenCalled();
+    expect(result.pm25).toBe(16.6);
+    expect(result.dataTime).toContain('2026');
   });
 
   it('HTTP 오류면 에러를 던진다', async () => {
-    mockFetch.mockResolvedValueOnce({ ok: false, status: 401 });
-    await expect(getOpenWeatherAirQuality(37.5, 127.0)).rejects.toThrow('401');
+    mockFetch.mockResolvedValueOnce({ ok: false, status: 500 });
+    await expect(getOpenWeatherAirQuality(37.5, 127.0)).rejects.toThrow('500');
   });
 
-  it('응답에 데이터가 없으면 에러를 던진다', async () => {
+  it('응답에 current 데이터가 없으면 에러를 던진다', async () => {
     mockFetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ list: [] }),
+      json: async () => ({}),
     });
     await expect(getOpenWeatherAirQuality(37.5, 127.0)).rejects.toThrow('데이터 없음');
   });
