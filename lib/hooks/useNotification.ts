@@ -2,6 +2,18 @@
 
 import { useState, useEffect } from 'react';
 
+function isIOS(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return /iPhone|iPad|iPod/.test(navigator.userAgent);
+}
+
+function isStandalone(): boolean {
+  if (typeof window === 'undefined') return false;
+  const media = window.matchMedia('(display-mode: standalone)').matches;
+  const iosNative = (navigator as Navigator & { standalone?: boolean }).standalone === true;
+  return media || iosNative;
+}
+
 function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -15,16 +27,23 @@ export function useNotification(
 ): {
   isSubscribed: boolean;
   isSupported: boolean;
+  requiresInstall: boolean;
   loading: boolean;
   toggle: () => Promise<void>;
 } {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
+  const [requiresInstall, setRequiresInstall] = useState(false);
   const [loading, setLoading] = useState(false);
   const [registration, setRegistration] = useState<ServiceWorkerRegistration | null>(null);
 
   useEffect(() => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+    if (isIOS() && !isStandalone()) {
+      setRequiresInstall(true);
+      return;
+    }
 
     navigator.serviceWorker
       .register('/sw.js')
@@ -82,5 +101,5 @@ export function useNotification(
     }
   };
 
-  return { isSubscribed, isSupported, loading, toggle };
+  return { isSubscribed, isSupported, requiresInstall, loading, toggle };
 }
